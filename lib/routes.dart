@@ -9,7 +9,7 @@ final Map<String, Widget Function(BuildContext)> routes = {
   '/login': (context) => const LoginScreen(),
   '/register': (context) => const RegisterScreen(),
   '/': (context) => const MyHomePage(),
-  '/movies': (context) => const MoviesScreen(),
+  '/movies': (context) => MoviesScreen(),
   '/other': (context) => Scaffold(
     appBar: AppBar(),
   ),

@@ -20,7 +20,7 @@ class _ScreenWrapper extends State<ScreenWrapper> {
 
   List<Widget> list = [
     const MyHomePage(),
-    const MoviesScreen(),
+    MoviesScreen(),
   ];
 
   @override
