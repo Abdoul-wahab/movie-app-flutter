@@ -1,9 +1,7 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
-import 'package:projet/screens/auth/login.dart';
-import 'package:projet/screens/home.dart';
-import 'package:projet/screens/movies/movies.dart';
+import 'package:projet/screens/auth/login_screen.dart';
+import 'package:projet/screens/home/home_screen.dart';
+import 'package:projet/screens/user/user_screen.dart';
 import 'package:provider/provider.dart';
 
 import '../models/user.dart';
@@ -19,14 +17,13 @@ class _ScreenWrapper extends State<ScreenWrapper> {
   int index = 0;
 
   List<Widget> list = [
-    const MyHomePage(),
-    MoviesScreen(),
+    const HomeScreen(),
+    const UserScreen(),
   ];
 
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<AppUser?>(context);
-
 
     if (user == null) {
       return const LoginScreen();
@@ -41,15 +38,13 @@ class _ScreenWrapper extends State<ScreenWrapper> {
           onTap: (int i) {
             setState(() {
               index = i;
-              log('index: $index');
             });
           },
-          backgroundColor: Colors.blue,
-          selectedItemColor: Colors.white,
-          iconSize: 48,
+          selectedItemColor: Colors.black87,
+          iconSize: 40,
           items: const [
             BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-            BottomNavigationBarItem(icon: Icon(Icons.list), label: 'Movies'),
+            BottomNavigationBarItem(icon: Icon(Icons.account_box), label: 'Movies'),
           ],
         ),
       );

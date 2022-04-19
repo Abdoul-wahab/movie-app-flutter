@@ -5,23 +5,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'dart:convert' as convert;
 import 'package:http/http.dart' as http;
-import '../constants.dart';
-import 'details/details_screen.dart';
+import 'package:projet/components/custom_search.dart';
+import '../../constants.dart';
+import '../details/components/genres.dart';
+import '../details/details_screen.dart';
 
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key}) : super(key: key);
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({Key? key}) : super(key: key);
 
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  _HomeScreenState createState() => _HomeScreenState();
 }
 
 
-class _MyHomePageState extends State<MyHomePage> {
+class _HomeScreenState extends State<HomeScreen> {
   late PageController _pageController;
   int _currentPage = 0;
 
-  var _request = [];
+  var _request;
 
   var url = Uri.https('api.tvmaze.com', '/shows');
 
@@ -46,15 +48,15 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     // TODO: implement initState
-    getAllShwos();
+    _request = [];
     super.initState();
     _pageController =
         PageController(initialPage: _currentPage, viewportFraction: 0.8);
+    getAllShwos();
   }
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     _pageController.dispose();
   }
@@ -73,7 +75,12 @@ class _MyHomePageState extends State<MyHomePage> {
         IconButton(
           padding: const EdgeInsets.symmetric(horizontal: kDefaultPadding),
           icon: SvgPicture.asset("assets/icons/search.svg"),
-          onPressed: () {},
+          onPressed: () {
+            showSearch(
+              context: context,
+              delegate: CustomSearchDelegate(),
+            );
+          },
         ),
       ],
     );
@@ -99,15 +106,20 @@ class _MyHomePageState extends State<MyHomePage> {
                         fontSize: 30)),
               ),
             ),
+            Genres(movie:  (_request != null && _request.isNotEmpty) ? _request[_currentPage] : null),
             AspectRatio(
               aspectRatio: 0.85,
               child: PageView.builder(
+                  onPageChanged: (value) {
+                    setState(() {
+                      _currentPage = value;
+                    });
+                  },
                   itemCount: _request.length,
                   physics: const ClampingScrollPhysics(),
                   controller: _pageController,
-                  itemBuilder: (context, index) {
-                    return carouselView(index);
-                  }),
+                  itemBuilder: (context, index) => carouselView(index)
+              ),
             )
           ],
         ),
@@ -125,13 +137,18 @@ class _MyHomePageState extends State<MyHomePage> {
           value = (value * 0.038).clamp(-1, 1);
           print("value $value index $index");
         }
-        return Transform.rotate(
-          angle: pi * value,
-          child: OpenContainer(
-            closedElevation: 0,
-            openElevation: 0,
-            closedBuilder: (context, action) => carouselCard(_request[index]),
-            openBuilder: (context, action) => DetailsScreen(movie: _request[index]),
+
+        return AnimatedOpacity(
+          duration: const Duration(milliseconds: 350),
+          opacity: _currentPage == index ? 1 : 0.2,
+          child: Transform.rotate(
+            angle: pi * value,
+            child: OpenContainer(
+              closedElevation: 0,
+              openElevation: 0,
+              closedBuilder: (context, action) => carouselCard(_request.isNotEmpty ? _request[index] : null),
+              openBuilder: (context, action) => DetailsScreen(movie: _request.isNotEmpty ? _request[index] : null),
+            ),
           ),
         );
       },
@@ -190,6 +207,5 @@ class _MyHomePageState extends State<MyHomePage> {
       ],
     );
   }
-
-
+  
 }

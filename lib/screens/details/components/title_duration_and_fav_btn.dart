@@ -24,7 +24,7 @@ class TitleDurationAndFabBtn extends StatelessWidget {
                   movie['name'],
                   style: Theme.of(context).textTheme.headline5,
                 ),
-                SizedBox(height: kDefaultPadding / 2),
+                const SizedBox(height: kDefaultPadding / 2),
                 Row(
                   children: <Widget>[
                     Text(
@@ -38,7 +38,7 @@ class TitleDurationAndFabBtn extends StatelessWidget {
                     ),
                     const SizedBox(width: kDefaultPadding),
                     const Text(
-                      "2h 32min",
+                      "2h 52min",
                       style: TextStyle(color: kTextLightColor),
                     ),
                   ],
