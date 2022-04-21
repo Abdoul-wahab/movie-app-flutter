@@ -1,8 +1,8 @@
-import 'dart:math';
 
 import 'package:firebase_auth/firebase_auth.dart';
 
 import '../models/user.dart';
+import 'database.dart';
 
 
 class AuthenticationService {
@@ -29,7 +29,7 @@ class AuthenticationService {
     }
   }
 
-  Future registerWithEmailAndPassword(String name, String email, String password) async {
+  Future registerWithEmailAndPassword(String firstname, String lastname, String city, String email, String password) async {
     try {
       UserCredential result =
       await _auth.createUserWithEmailAndPassword(email: email, password: password);
@@ -37,6 +37,7 @@ class AuthenticationService {
       if (user == null) {
         throw Exception("No user found");
       } else {
+        await DatabaseService(user.uid).saveUser(firstname,lastname,city, email);
         return _userFromFirebaseUser(user);
       }
     } catch (exception) {

@@ -12,7 +12,7 @@ class RegisterForm extends StatefulWidget {
 class _RegisterFormState extends State<RegisterForm> {
   final key = GlobalKey<FormState>();
   final AuthenticationService _auth = AuthenticationService();
-  String name = '', email = '', password = '', errorMessage = '';
+  String firstname = '', lastname = '', city = '', email = '', password = '', errorMessage = '';
 
 
   @override
@@ -39,13 +39,57 @@ class _RegisterFormState extends State<RegisterForm> {
               },
               onSaved: (String? value) {
                 setState(() {
-                  name = value!;
+                  firstname = value!;
+                });
+              },
+              decoration: const InputDecoration(
+                hintText: 'Prenom',
+              ),
+            ),
+
+            const SizedBox(
+              height: 25,
+            ),
+
+            TextFormField(
+              validator: (String? value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter some text';
+                }
+                return null;
+              },
+              onSaved: (String? value) {
+                setState(() {
+                  lastname = value!;
                 });
               },
               decoration: const InputDecoration(
                 hintText: 'Nom',
               ),
             ),
+
+            const SizedBox(
+              height: 25,
+            ),
+
+            TextFormField(
+              validator: (String? value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter some text';
+                }
+                return null;
+              },
+              onSaved: (String? value) {
+                setState(() {
+                  city = value!;
+                });
+              },
+              decoration: const InputDecoration(
+                hintText: 'Ville',
+              ),
+            ),
+
+
             const SizedBox(
               height: 25,
             ),
@@ -92,7 +136,7 @@ class _RegisterFormState extends State<RegisterForm> {
               onPressed: () async {
                 if (key.currentState!.validate()) {
                   key.currentState!.save();
-                  dynamic result = await _auth.registerWithEmailAndPassword(name, email, password);
+                  dynamic result = await _auth.registerWithEmailAndPassword(firstname, lastname, city, email, password);
                   if (result != null) {
                     Navigator.pushNamed(context, '/');
                   }

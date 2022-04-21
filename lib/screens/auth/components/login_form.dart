@@ -77,7 +77,8 @@ class _LoginFormState extends State<LoginForm> {
                 if (key.currentState!.validate()) {
                   key.currentState!.save();
                   dynamic result = await _auth.signInWithEmailAndPassword(email, password);
-                  if (result == null) {
+                  if (result != null) {
+                    Navigator.pushNamed(context, '/');
                     setState(() {
                       log('result: $result');
                     });
