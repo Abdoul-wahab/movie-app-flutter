@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
 import 'dart:developer';
 
-import 'package:projet/services/authentication.dart';
+import '../../../components/default_button.dart';
+import '../../../components/form_error.dart';
+import '../../../constants.dart';
+import '../../../services/authentication.dart';
+import '../../../size_config.dart';
+import 'custom_surfix_icon.dart';
+
+
 
 
 
@@ -14,14 +21,31 @@ class LoginForm extends StatefulWidget {
 }
 
 class _LoginFormState extends State<LoginForm> {
-  final key = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
   final AuthenticationService _auth = AuthenticationService();
   String email = '', password = '', errorMessage = '';
+  final List<String?> errors = [];
+
+  void addError({String? error}) {
+    if (!errors.contains(error)) {
+      setState(() {
+        errors.add(error);
+      });
+    }
+  }
+
+  void removeError({String? error}) {
+    if (errors.contains(error)) {
+      setState(() {
+        errors.remove(error);
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Form(
-      key: key,
+      key: _formKey,
       child: Padding(
         padding: const EdgeInsets.symmetric(
           vertical: 20,
@@ -29,53 +53,19 @@ class _LoginFormState extends State<LoginForm> {
         ),
         child: Column(
           children: <Widget>[
-            const Text('Connexion'),
-            const SizedBox(
-              height: 25,
-            ),
-            TextFormField(
-              validator: (String? value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter some text';
-                }
-                return null;
-              },
-              onSaved: (String? value) {
-                setState(() {
-                  email = value!;
-                });
-              },
-              decoration: const InputDecoration(
-                hintText: 'Email',
-              ),
-            ),
-            const SizedBox(
-              height: 25,
-            ),
-            TextFormField(
-              validator: (String? value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter some text';
-                }
-                return null;
-              },
-              onSaved: (String? value) {
-                setState(() {
-                  password = value!;
-                });
-              },
-              obscureText: true,
-              enableSuggestions: false,
-              autocorrect: false,
-              decoration: const InputDecoration(hintText: 'Mot de passe'),
-            ),
-            const SizedBox(
-              height: 25,
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                if (key.currentState!.validate()) {
-                  key.currentState!.save();
+            buildEmailFormField(),
+            SizedBox(height: getProportionateScreenHeight(30)),
+            buildPasswordFormField(),
+            SizedBox(height: getProportionateScreenHeight(30)),
+            FormError(errors: errors),
+            SizedBox(height: getProportionateScreenHeight(20)),
+
+            DefaultButton(
+              text: "Login",
+              press: () async {
+                if (_formKey.currentState!.validate()) {
+                  _formKey.currentState!.save();
+                  // if all are valid then go to success screen
                   dynamic result = await _auth.signInWithEmailAndPassword(email, password);
                   if (result != null) {
                     Navigator.pushNamed(context, '/');
@@ -85,36 +75,106 @@ class _LoginFormState extends State<LoginForm> {
                   }
                 }
               },
-              child: const Text('Se connector'),
-            ),
-            const SizedBox(
-              height: 25,
-            ),
-            if (errorMessage.isNotEmpty) Text(errorMessage),
-            const SizedBox(
-              height: 25,
-            ),
-            TextButton.icon(
-              icon: const Icon(
-                Icons.person,
-                color: Colors.blue,
-              ),
-              label: const Text(
-                'Inscription',
-                style: TextStyle(
-                  color: Colors.blue,
-                  decoration: TextDecoration.underline,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 10,
-                ),
-              ),
-              onPressed: () async {
-                Navigator.pushNamed(context, '/register');
-              },
             ),
           ],
         ),
       ),
     );
   }
+
+
+  TextFormField buildPasswordFormField() {
+    return TextFormField(
+      style: const TextStyle(color: kTextColor),
+      obscureText: true,
+      onSaved: (newValue) => password = newValue!,
+      onChanged: (value) {
+        if (value.isNotEmpty) {
+          removeError(error: kPassNullError);
+        } else if (value.length >= 6) {
+          removeError(error: kShortPassError);
+        }
+        return;
+      },
+      validator: (value) {
+        if (value!.isEmpty) {
+          addError(error: kPassNullError);
+          return "";
+        } else if (value.length < 6) {
+          addError(error: kShortPassError);
+          return "";
+        }
+        return null;
+      },
+      decoration: const InputDecoration(
+        labelText: "Password",
+        hintText: "Enter your password",
+        labelStyle: TextStyle(
+            color: kTextColor,
+        ),
+        floatingLabelBehavior: FloatingLabelBehavior.always,
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: kTextColor, width: 1.0),
+          borderRadius: BorderRadius.all(
+            Radius.circular(20.0),
+          ),
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.all(
+            Radius.circular(20.0),
+          ),
+        ),
+        suffixIcon: CustomSurffixIcon(svgIcon: "assets/icons/Lock.svg"),
+      ),
+    );
+  }
+
+  TextFormField buildEmailFormField() {
+    return TextFormField(
+      keyboardType: TextInputType.emailAddress,
+      onSaved: (newValue) => email = newValue!,
+      onChanged: (value) {
+        if (value.isNotEmpty) {
+          removeError(error: kEmailNullError);
+        } else if (emailValidatorRegExp.hasMatch(value)) {
+          removeError(error: kInvalidEmailError);
+        }
+        return;
+      },
+      validator: (value) {
+        if (value!.isEmpty) {
+          addError(error: kEmailNullError);
+          return "";
+        } else if (!emailValidatorRegExp.hasMatch(value)) {
+          addError(error: kInvalidEmailError);
+          return "";
+        }
+        return null;
+      },
+      decoration: const InputDecoration(
+        labelText: "Email",
+        hintText: "Enter your email",
+        labelStyle: TextStyle(
+          color: kTextColor,
+        ),
+        floatingLabelBehavior: FloatingLabelBehavior.always,
+        contentPadding: EdgeInsets.all(15),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: kTextColor, width: 1.0),
+          borderRadius: BorderRadius.all(
+            Radius.circular(20.0),
+          ),
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.all(
+            Radius.circular(20.0),
+          ),
+        ),
+        suffixIcon: CustomSurffixIcon(svgIcon: "assets/icons/Mail.svg"),
+      ),
+    );
+  }
+
+
+
 }

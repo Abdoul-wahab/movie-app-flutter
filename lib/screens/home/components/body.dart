@@ -183,13 +183,23 @@ class _BodyState extends State<Body> {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.only(top: 20),
+          padding: const EdgeInsets.only(top: 12),
           child: Text(
             data['name'],
             style: const TextStyle(
                 color: Colors.black45,
                 fontSize: 25,
                 fontWeight: FontWeight.bold),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(top: 5),
+          child: Text(
+            'Date : ${data['premiered']}',
+            style: const TextStyle(
+              color: kTextLightColor,
+              fontSize: 14,
+            ),
           ),
         ),
         Row(
