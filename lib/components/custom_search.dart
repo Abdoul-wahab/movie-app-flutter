@@ -54,6 +54,7 @@ class CustomSearchDelegate extends SearchDelegate<String> {
         onTap: () {
           query = query.isEmpty ? suggestionList[index] : suggestionList[index]['name'];
           showResults(context);
+          close(context, query);
         },
         leading: const Icon(Icons.menu_outlined),
         title: Text(query.isEmpty ? suggestionList[index] : suggestionList[index]['name'] ),

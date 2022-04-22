@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'dart:convert' as convert;
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 import '../../../components/custom_search.dart';
 import '../../../constants.dart';
+import '../../../providers/theme_provider.dart';
 import '../../details/components/genres.dart';
 import '../../details/details_screen.dart';
 
@@ -105,13 +107,16 @@ class _BodyState extends State<Body> {
 
 
   AppBar buildAppBar() {
+    final themeProvider = Provider.of<ThemeProvider>(context);
     return AppBar(
       backgroundColor: Colors.white,
       elevation: 0,
-      leading: IconButton(
-        padding: const EdgeInsets.only(left: kDefaultPadding),
-        icon: SvgPicture.asset("assets/icons/menu.svg"),
-        onPressed: () {},
+      leading: Switch.adaptive(
+        value: themeProvider.isDarkMode,
+        onChanged: (value) {
+          final provider = Provider.of<ThemeProvider>(context, listen: false);
+          provider.toggleTheme(value);
+        },
       ),
       actions: <Widget>[
         IconButton(
