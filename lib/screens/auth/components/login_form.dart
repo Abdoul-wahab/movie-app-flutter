@@ -65,7 +65,6 @@ class _LoginFormState extends State<LoginForm> {
               press: () async {
                 if (_formKey.currentState!.validate()) {
                   _formKey.currentState!.save();
-                  // if all are valid then go to success screen
                   dynamic result = await _auth.signInWithEmailAndPassword(email, password);
                   if (result != null) {
                     Navigator.pushNamed(context, '/');

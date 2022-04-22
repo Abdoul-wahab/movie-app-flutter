@@ -1,6 +1,18 @@
 import 'package:flutter/material.dart';
 
-class CustomSearchDelegate extends SearchDelegate {
+class CustomSearchDelegate extends SearchDelegate<String> {
+
+  final movies;
+  final recentSearches = [
+    "The Amazing Race",
+    "The Last Ship",
+    "Vikings",
+    "Supernatural",
+  ];
+
+  CustomSearchDelegate(this.movies);
+
+
   @override
   List<Widget> buildActions(BuildContext context) {
     return [
@@ -21,20 +33,31 @@ class CustomSearchDelegate extends SearchDelegate {
           progress: transitionAnimation,
       ),
       onPressed: () {
-        close(context, null);
+        close(context, '');
       },
     );
   }
 
   @override
   Widget buildResults(BuildContext context) {
-    return Column();
+    return Container();//DetailsScreen(movie: movie.isNotEmpty ? movie : null)
   }
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    // This method is called everytime the search term changes.
-    // If you want to add search suggestions as the user enters their search term, this is the place to do that.
-    return Column();
+    final List suggestionList = query.isEmpty
+        ? recentSearches.toList()
+        : movies.where((movie) => movie['name'].toString().toLowerCase().contains(query) ).toList();
+    return ListView.builder(
+      itemCount: suggestionList.length,
+      itemBuilder: (BuildContext context, int index) => ListTile(
+        onTap: () {
+          query = query.isEmpty ? suggestionList[index] : suggestionList[index]['name'];
+          showResults(context);
+        },
+        leading: const Icon(Icons.menu_outlined),
+        title: Text(query.isEmpty ? suggestionList[index] : suggestionList[index]['name'] ),
+      ),
+    );
   }
 }

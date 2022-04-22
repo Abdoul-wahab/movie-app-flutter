@@ -1,5 +1,4 @@
 import 'dart:math';
-
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -121,7 +120,7 @@ class _BodyState extends State<Body> {
           onPressed: () {
             showSearch(
               context: context,
-              delegate: CustomSearchDelegate(),
+              delegate: CustomSearchDelegate(_request),
             );
           },
         ),

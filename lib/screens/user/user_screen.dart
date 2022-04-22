@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:provider/provider.dart';
-
 import '../../constants.dart';
-import '../../models/user.dart';
 import 'components/body.dart';
 
 class UserScreen extends StatefulWidget {

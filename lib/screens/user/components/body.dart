@@ -33,6 +33,12 @@ class Body extends StatelessWidget {
                   arrowIcon: Container(),
                 ),
                 ProfileMenu(
+                  text: "${userData.email}",
+                  icon: "assets/icons/Mail.svg",
+                  press: () => {},
+                  arrowIcon: Container(),
+                ),
+                ProfileMenu(
                   text: "${userData.city}",
                   icon: "assets/icons/Location point.svg",
                   press: () {},
