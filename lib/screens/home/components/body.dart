@@ -67,20 +67,20 @@ class _BodyState extends State<Body> {
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: buildAppBar(),
+      appBar: buildAppBar(themeProvider),
       body: Padding(
         padding: const EdgeInsets.symmetric(vertical: 2),
         child: Column(
           children: <Widget>[
-            const Padding(
-              padding: EdgeInsets.all(40.0),
+            Padding(
+              padding: const EdgeInsets.all(40.0),
               child: Center(
                 child: Text("Find Your Movie",
                     style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        color: Colors.black87,
+                        color: themeProvider.isDarkMode ? kTextLightColor : Colors.black87,
                         fontSize: 30)),
               ),
             ),
@@ -96,7 +96,7 @@ class _BodyState extends State<Body> {
                   itemCount: _request.length,
                   physics: const ClampingScrollPhysics(),
                   controller: _pageController,
-                  itemBuilder: (context, index) => carouselView(index)
+                  itemBuilder: (context, index) => carouselView(index, themeProvider)
               ),
             )
           ],
@@ -106,10 +106,9 @@ class _BodyState extends State<Body> {
   }
 
 
-  AppBar buildAppBar() {
-    final themeProvider = Provider.of<ThemeProvider>(context);
+  AppBar buildAppBar(themeProvider) {
     return AppBar(
-      backgroundColor: Colors.white,
+      backgroundColor: themeProvider.isDarkMode ? Colors.transparent : Colors.white,
       elevation: 0,
       leading: Switch.adaptive(
         value: themeProvider.isDarkMode,
@@ -121,7 +120,10 @@ class _BodyState extends State<Body> {
       actions: <Widget>[
         IconButton(
           padding: const EdgeInsets.symmetric(horizontal: kDefaultPadding),
-          icon: SvgPicture.asset("assets/icons/search.svg"),
+          icon: SvgPicture.asset(
+              "assets/icons/search.svg",
+            color: themeProvider.isDarkMode ? kTextLightColor : kPrimaryColor,
+          ),
           onPressed: () {
             showSearch(
               context: context,
@@ -133,7 +135,7 @@ class _BodyState extends State<Body> {
     );
   }
 
-  Widget carouselView(int index) {
+  Widget carouselView(int index, themeProvider) {
     return AnimatedBuilder(
       animation: _pageController,
       builder: (context, child) {
@@ -152,7 +154,7 @@ class _BodyState extends State<Body> {
             child: OpenContainer(
               closedElevation: 0,
               openElevation: 0,
-              closedBuilder: (context, action) => carouselCard(_request.isNotEmpty ? _request[index] : null),
+              closedBuilder: (context, action) => carouselCard(_request.isNotEmpty ? _request[index] : null, themeProvider.isDarkMode),
               openBuilder: (context, action) => DetailsScreen(movie: _request.isNotEmpty ? _request[index] : null),
             ),
           ),
@@ -162,7 +164,7 @@ class _BodyState extends State<Body> {
   }
 
 
-  Column carouselCard(data) {
+  Column carouselCard(data, isDarkMode) {
     return Column(
       children: <Widget>[
         Expanded(
@@ -173,7 +175,7 @@ class _BodyState extends State<Body> {
               child: GestureDetector(
                 child: Container(
                   decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: Colors.black45,
                       borderRadius: BorderRadius.circular(30),
                       image: DecorationImage(
                           image: NetworkImage(
@@ -191,7 +193,7 @@ class _BodyState extends State<Body> {
           child: Text(
             data['name'],
             style: const TextStyle(
-                color: Colors.black45,
+                color: Colors.black45 ,
                 fontSize: 25,
                 fontWeight: FontWeight.bold),
           ),
